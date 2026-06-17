@@ -32,9 +32,6 @@ type Category = {
   mark: string;
 };
 
-const PRINT_BRIDGE_URL =
-  process.env.EXPO_PUBLIC_PRINT_BRIDGE_URL ?? 'http://192.168.10.3:3030';
-
 const MENU: Dish[] = [
   { id: 1, name: 'Quesadillas', description: 'Quesadillas', price: 33, category: 'Platillos' },
   { id: 2, name: 'Tostadas', description: 'Tostadas', price: 37, category: 'Platillos' },
@@ -133,6 +130,7 @@ export default function HomeScreen() {
     setIsPrinting(true);
     const orderData = {
       mesa,
+      createdAt: new Date(),
       items: order.map((item) => ({
         name: item.dish.name,
         price: item.dish.price,
@@ -144,30 +142,11 @@ export default function HomeScreen() {
     };
 
     try {
-      // Intento 1: Impresión Directa (Solo funciona en App Nativa)
-      console.log('Intentando impresión directa...');
       await printDirect(orderData);
-      Alert.alert('¡Éxito!', 'Ticket impreso directamente desde la App.');
-    } catch (directError) {
-      console.log('Impresión directa no disponible, intentando vía Bridge...');
-      
-      // Intento 2: Impresión vía Bridge (Funciona en Web y Expo Go)
-      try {
-        const bridgeUrl = `http://${window?.location?.hostname || '192.168.10.32'}:3030/print`;
-        const response = await fetch(bridgeUrl, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(orderData),
-        });
-
-        if (!response.ok) throw new Error('El bridge no respondió.');
-        Alert.alert('¡Éxito!', 'Ticket impreso vía Bridge (Laptop).');
-      } catch (bridgeError) {
-        Alert.alert(
-          'Error de Impresión',
-          'No se pudo conectar con la impresora ni con el Bridge.\n\n1. Revisa que el WiFi sea el correcto.\n2. Asegúrate que la laptop tenga corriendo "npm start" en la carpeta print-bridge.'
-        );
-      }
+      Alert.alert('Exito', 'Ticket enviado directamente a la impresora.');
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Error desconocido al imprimir.';
+      Alert.alert('Error de impresion', message);
     } finally {
       setIsPrinting(false);
     }
@@ -775,7 +754,7 @@ const styles = StyleSheet.create({
     fontSize: 26,
   },
   overlay: {
-    ...StyleSheet.absoluteFillObject,
+    ...StyleSheet.absoluteFill,
     backgroundColor: 'rgba(0,0,0,0.55)',
   },
   orderSheet: {

@@ -16,6 +16,23 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npx expo start
    ```
 
+## Impresion POS 80 WiFi
+
+La app imprime directo por TCP desde `src/utils/printer.ts` hacia
+`192.168.10.3:9100`. No usa `print-bridge`, HTTP local, Node ni procesos
+externos para imprimir.
+
+La red de la impresora puede no tener salida a internet. El socket se fuerza a
+usar la interfaz `wifi` para evitar que Android intente enrutar por datos
+moviles cuando detecta que el WiFi local no tiene internet.
+
+Como la conexion TCP usa el modulo nativo `react-native-tcp-socket`, no funciona
+en Expo Go. Para probar impresion real compila la app Android:
+
+```bash
+npm run android:dev
+```
+
 In the output, you'll find options to open the app in a
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)

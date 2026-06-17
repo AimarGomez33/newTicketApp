@@ -1,4 +1,9 @@
-# print-bridge
+# print-bridge (legado)
+
+> Este servidor queda solo como referencia historica/formato ESC/POS. Para la app
+> React Native usa `nativeApp/my-app/src/utils/printer.ts`, donde el socket TCP
+> se abre dentro de la app y no se requiere Node, Express, HTTP local ni
+> procesos externos.
 
 Servidor Node.js que actúa como **puente HTTP → ESC/POS → TCP** para una
 impresora térmica POS de 80 mm (ej. Epson TM-T20, Bixolon, SNBC, etc.).
